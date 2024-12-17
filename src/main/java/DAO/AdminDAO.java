@@ -71,6 +71,17 @@ public class AdminDAO implements GenericDAO<Admin> {
         return admin.getUsername();
     }
 
+    public String getAdminPassword(Admin admin){
+        return admin.getPassword();
+    }
+    public double getAdminWorkingHours(Admin admin){
+        return admin.getWorkingHours();
+    }
+
+    public String getAdminRole(Admin admin){
+        return admin.getRole();
+    }
+
     public int getAdminId(Admin admin){
         return admin.getAdminId();
     }

@@ -4,10 +4,12 @@ import Entity.Admin;
 import Entity.Category;
 import Entity.Product;
 import DAO.*;
+import Network.ClientHandler;
 import Service.ProductService;
 import Service.CategoryService;
 
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -23,11 +25,11 @@ public class AdminService extends UserService {
 
 
 
-    public void logIn(String username, String password)  {
+    public boolean logIn(String username, String password)  {
 
         if(username==null || password==null){
             System.out.println("Please make sure to fill out all fields");
-            return;
+            return false;
 
         }
 
@@ -36,16 +38,16 @@ public class AdminService extends UserService {
 
         if(admin==null){
             System.out.println("Account not found, please make sure the username is correct or try to sign up if you're new here.");
-            return;
+            return false;
         }
 
         if(!((admin.getPassword()).equals(password))){
             System.out.println("Wrong password entered.");
-            return;
+            return false;
         }
 
         System.out.println("Login successful!");
-
+        return true;
 
     }
 
@@ -140,8 +142,8 @@ public class AdminService extends UserService {
         adminDAO.getById(id);
     }
 
-    public void getAdmin(String username){
-        adminDAO.getAdminByUsername(username);
+    public Admin getAdminByUsername(String username){
+        return adminDAO.getAdminByUsername(username);
     }
 
     public void updateAdmin(Admin admin){
@@ -171,6 +173,44 @@ public class AdminService extends UserService {
 
     public void deleteCategory(int id) {
         categoryService.deleteCategory(id);
+    }
+
+    public String getAdminUsername(Admin admin){
+        return adminDAO.getAdminUsername(admin);
+    }
+
+    public String getAdminPassword(Admin admin){
+        return adminDAO.getAdminPassword(admin);
+    }
+
+    public double getAdminWorkingHours(Admin admin){
+        return adminDAO.getAdminWorkingHours(admin);
+    }
+
+    public String getAdminRole(Admin admin){
+        return adminDAO.getAdminRole(admin);
+    }
+
+    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, int workingHours){
+       adminDAO.createNewAdmin(username,password,dateOfBirth,role,workingHours);
+    }
+
+    //netowork
+    public static void sendMessageToCustomer(String customerUsername, String message) {
+        ClientHandler customerHandler = ClientHandler.getClientHandlerByUsername(customerUsername);
+
+        if (customerHandler != null) {
+            try {
+                customerHandler.getBufferedWriter().write("Message from Admin: " + message);
+                customerHandler.getBufferedWriter().newLine();
+                customerHandler.getBufferedWriter().flush();
+            } catch (IOException e) {
+                System.out.println("Failed to send message to " + customerUsername);
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Customer " + customerUsername + " is not online.");
+        }
     }
 
 

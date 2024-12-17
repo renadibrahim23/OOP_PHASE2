@@ -5,4 +5,6 @@ module com.example.phase2 {
 
     opens com.example.phase2 to javafx.fxml;
     exports com.example.phase2;
+    exports GUI;
+
 }

@@ -15,7 +15,7 @@ public class Database {
     public static List<Category> categories = new ArrayList<>();
     public static List<Cart> carts = new ArrayList<>();
     public static List<Admin> admins = new ArrayList<>();
-
+/*
     static {
 
         try{
@@ -24,10 +24,10 @@ public class Database {
             System.out.println("Couldn't load file");
         }
 
-    }
+    }*/
 
 
-
+/*
     public static void loadCustomersFromFile(String filePath) throws IOException{
         BufferedReader reader = null;
         try {
@@ -75,5 +75,6 @@ public class Database {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true))) {
             writer.write(customerData);
         }
-    }
+    }*/
+
 }

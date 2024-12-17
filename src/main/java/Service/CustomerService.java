@@ -1,11 +1,13 @@
 package Service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Scanner;
 
 import DAO.*;
 import Entity.Customer;
 import Entity.Order;
+import Network.ClientHandler;
 
 public class CustomerService extends UserService{
 
@@ -58,7 +60,7 @@ public class CustomerService extends UserService{
         }
 
     }
-    public void logIn(String username,String password){
+    public boolean logIn(String username,String password){
 
 
 
@@ -66,16 +68,16 @@ public class CustomerService extends UserService{
 
         if(customer==null){
             System.out.println("Account not found, please make sure the username is correct or try to sign up if you're new here.");
-            return;
+            return false;
         }
 
         if(!((customer.getPassword()).equals(password))){
             System.out.println("Wrong password entered.");
-            return;
+            return false;
         }
 
         System.out.println("Login successful!");
-
+        return true;
     }
 
 
@@ -98,6 +100,24 @@ public class CustomerService extends UserService{
         }
         orderService.placeOrder(order);
 
+    }
+
+    //network
+    public static void sendMessageToAdmin(String adminUsername, String message) {
+        ClientHandler adminHandler = ClientHandler.getClientHandlerByUsername(adminUsername);
+
+        if (adminHandler != null) {
+            try {
+                adminHandler.getBufferedWriter().write("Message from Customer: " + message);
+                adminHandler.getBufferedWriter().newLine();
+                adminHandler.getBufferedWriter().flush();
+            } catch (IOException e) {
+                System.out.println("Failed to send message to " + adminUsername);
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Admin " + adminUsername + " is not online.");
+        }
     }
 
 }

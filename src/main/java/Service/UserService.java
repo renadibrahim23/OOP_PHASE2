@@ -6,7 +6,7 @@ import java.util.Date;
 public abstract class UserService {
 
     public abstract void signUp(String username, String password, Date dateOfBirth);
-    public abstract void logIn(String username, String password);
+    public abstract boolean logIn(String username, String password);
     protected static boolean isValidUsername(String username) {
         if (username == null || username.isEmpty()) {
             System.out.println("Username cannot be empty or null.");
