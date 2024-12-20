@@ -79,6 +79,10 @@ public class ProductDAO implements GenericDAO<Product> {
                 product.getPrice() >= 0;
     }
 
+    public int getProductId(Product product){
+        return product.getId();
+    }
+
 
 
 }

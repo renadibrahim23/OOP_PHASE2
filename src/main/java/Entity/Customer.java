@@ -117,4 +117,17 @@ public class Customer extends User {
     public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
+
+    public static int getIdCounter() {
+        return idCounter;
+    }
+
+    public static void setIdCounter(int idCounter) {
+        Customer.idCounter = idCounter;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer [customerId=" + customerId + ", username" + getUsername() + ", address" + address+ ", gender "+gender+"]";
+    }
 }

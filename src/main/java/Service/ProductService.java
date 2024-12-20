@@ -119,6 +119,11 @@ public class ProductService {
 
     }
 
+    public int getProductId(Product product){
+        return productDAO.getProductId(product);
+
+    }
+
 
 
 

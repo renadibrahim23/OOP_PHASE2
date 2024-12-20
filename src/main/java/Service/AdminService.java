@@ -1,8 +1,6 @@
 
 package Service;
-import Entity.Admin;
-import Entity.Category;
-import Entity.Product;
+import Entity.*;
 import DAO.*;
 import Network.ClientHandler;
 import Service.ProductService;
@@ -10,6 +8,7 @@ import Service.CategoryService;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -22,6 +21,7 @@ public class AdminService extends UserService {
     private final CategoryService categoryService=new CategoryService();
     private final CustomerDAO customerDAO=new CustomerDAO();
     private final OrderDAO orderDAO=new OrderDAO();
+    private final OrderService orderService=new OrderService();
 
 
 
@@ -191,11 +191,42 @@ public class AdminService extends UserService {
         return adminDAO.getAdminRole(admin);
     }
 
-    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, int workingHours){
+    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, double workingHours){
        adminDAO.createNewAdmin(username,password,dateOfBirth,role,workingHours);
     }
 
-    //netowork
+    public int getNumberOfCustomers(){
+        return customerDAO.getNumberOfCustomers();
+    }
+
+    public int getNumberOfOrders(){
+        return orderDAO.getNumberOfOrders();
+    }
+
+    public List<Customer> getAllCustomers(){
+        return customerDAO.getAllCustomers();
+    }
+
+    public String showCustomerInfo(Customer customer){
+        return customerDAO.showCustomerInfo(customer);
+    }
+
+    public void deleteCustomer(Customer customer){
+        customerDAO.delete(customerDAO.getCustomerId(customer));
+    }
+
+    public List<Order> showOrderInfo(Customer customer) {
+        List<Order> orders = orderService.getOrdersByCustomerId(customerDAO.getCustomerId(customer));
+        if (orders == null) {
+            orders = new ArrayList<>(); // Return an empty list if no orders found
+        }
+        return orders;
+    }
+
+
+
+
+    //network
     public static void sendMessageToCustomer(String customerUsername, String message) {
         ClientHandler customerHandler = ClientHandler.getClientHandlerByUsername(customerUsername);
 

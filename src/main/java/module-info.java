@@ -7,4 +7,7 @@ module com.example.phase2 {
     exports com.example.phase2;
     exports GUI;
 
+    opens Entity to javafx.base;
+    exports Entity;
+
 }

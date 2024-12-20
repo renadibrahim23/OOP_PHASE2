@@ -17,6 +17,7 @@ public class CustomerService extends UserService{
     private OrderService orderService= new OrderService();
     private CartService cartService= new CartService();;
 
+    public CustomerService(){}
     public CustomerService(OrderService orderService) {
         this.orderService = orderService;
     }
@@ -118,6 +119,14 @@ public class CustomerService extends UserService{
         } else {
             System.out.println("Admin " + adminUsername + " is not online.");
         }
+    }
+
+    public Customer createNewCustomer(String username, String password, Date dateOfBirth, String address, Customer.Gender gender) {
+        return customerDAO.createNewCustomer(username,password,dateOfBirth,address,gender);
+    }
+
+    public String showCustomerInfo(Customer customer){
+        return customerDAO.showCustomerInfo(customer);
     }
 
 }

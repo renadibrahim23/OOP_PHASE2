@@ -72,4 +72,8 @@ public class Order {
     public void setCheckOutTotal(double checkOutTotal) {
         this.checkOutTotal = checkOutTotal;
     }
+
+    public String toString(){
+        return "OrderId: "+orderId+" CheckoutTotal: "+checkOutTotal;
+    }
 }

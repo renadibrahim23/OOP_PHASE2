@@ -63,4 +63,11 @@ public class OrderDAO implements GenericDAO<Order> {
         add(newOrder);
     }
 
+    public int getNumberOfOrders(){
+        return Database.orders.size();
+    }
+
+
+
+
 }
