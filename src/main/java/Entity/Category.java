@@ -9,6 +9,10 @@ public class Category {
     int id;
 
     public Category(){}
+    public Category(String name){
+        this.name=name;
+        this.id=++idCounter;
+    }
     public Category(String name,List<Product> productsInCategory){
         this.name=name;
         this.productsInCategory=productsInCategory;
@@ -47,4 +51,10 @@ public class Category {
     public static int getIdCounter() {
         return idCounter;
     }
+
+    public String toString(){
+        return  name ;
+    }
+
+
 }

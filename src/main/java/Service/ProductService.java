@@ -20,17 +20,63 @@ public class ProductService {
             System.out.println("Product details are invalid");
         }
     }
-    public void createProduct(String name, double price, Category category, int quantity){
-        Product product=productDAO.createProduct(name,price,category,quantity);
-        if(productDAO.isValidProduct(product)){
+    public Product createProduct(String name, double price, Category category, int quantity) {
+        Product product = productDAO.createProduct(name, price, category, quantity);
+        if (productDAO.isValidProduct(product)) {
             productDAO.add(product);
-        }
-        else{
+            return product;
+        } else {
             System.out.println("Product details are invalid ");
-            Product.setIdCounter(Product.getIdCounter()-1);
+            Product.setIdCounter(Product.getIdCounter() - 1);
         }
+       return null;
 
     }
+
+    public Product createExistingProduct(int id,String name, double price, Category category, int quantity) {
+        Product product = productDAO.createProduct(name, price, category, quantity);
+        if (productDAO.isValidProduct(product)) {
+            productDAO.add(product);
+            return product;
+        } else {
+            System.out.println("Product details are invalid ");
+            Product.setIdCounter(Product.getIdCounter() - 1);
+        }
+        return null;
+
+    }
+
+    public String getProductName(Product product){
+        return productDAO.getProductName(product);
+    }
+
+    public Category getProductCategory(Product product){
+        return productDAO.getProductCategory(product);
+    }
+
+    public double getProductPrice(Product product){
+        return productDAO.getProductPrice(product);
+    }
+
+
+
+/*
+    public Product createProductNew(String name, double price, Category category, int quantity) {
+        Product product = productDAO.createProduct(name, price, category, quantity);
+        if (productDAO.isValidProduct(product)) {
+            productDAO.add(product);
+        } else {
+            System.out.println("Product details are invalid ");
+            Product.setIdCounter(Product.getIdCounter() - 1);
+        }
+        return product;
+
+    }*/
+
+
+
+
+
     public void updateProduct(Product updatedProduct){
         if(productDAO.isValidProduct(updatedProduct)) {
             if (productDAO.getById(updatedProduct.getId()) != null) {
@@ -43,6 +89,8 @@ public class ProductService {
             System.out.println("Updated Product details are invalid ");
         }
     }
+
+    /*
     public void deleteProduct(int id ){
         if(productDAO.getAllProducts().isEmpty()){
             System.out.println("No Products available to delete");
@@ -54,7 +102,12 @@ public class ProductService {
             System.out.println("The product you are trying to delete does not already exist");
         }
 
+    }*/
+
+    public void deleteProduct(int productId) {
+        productDAO.delete(productId); // Will throw ProductNotFoundException if not found
     }
+
     //need to figure out how we can link it to notify the admin or whatever
     public void checkForRestock(){
         if(productDAO.checkForRestock().isEmpty()){
@@ -73,6 +126,9 @@ public class ProductService {
             productDAO.getProductsInfo(products); // Print each product
         }
 
+    }
+    public List<Product> getProducts(){
+        return productDAO.getAllProducts();
     }
     public void searchProducts(String keyword) {
         if(keyword==null){
@@ -122,6 +178,10 @@ public class ProductService {
     public int getProductId(Product product){
         return productDAO.getProductId(product);
 
+    }
+
+    public int getProductQuantity(Product product){
+        return productDAO.getProductQuantity(product);
     }
 
 

@@ -191,8 +191,50 @@ public class AdminService extends UserService {
         return adminDAO.getAdminRole(admin);
     }
 
-    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, double workingHours){
-       adminDAO.createNewAdmin(username,password,dateOfBirth,role,workingHours);
+    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, double workingHours) throws IllegalArgumentException {
+        // Validate Username
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty.");
+        }
+        if (username.length() < 5) {
+            throw new IllegalArgumentException("Username must be at least 5 characters long.");
+        }
+
+        // Validate Password
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be null or empty.");
+        }
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long.");
+        }
+        if (!password.matches(".*[A-Z].*") || !password.matches(".*[a-z].*") || !password.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Password must include at least one uppercase letter, one lowercase letter, and one number.");
+        }
+
+        // Validate Date of Birth
+        if (dateOfBirth == null) {
+            throw new IllegalArgumentException("Date of Birth cannot be null.");
+        }
+        Date today = new Date();
+        if (dateOfBirth.after(today)) {
+            throw new IllegalArgumentException("Date of Birth cannot be in the future.");
+        }
+
+        // Validate Role
+        if (role == null || role.trim().isEmpty()) {
+            throw new IllegalArgumentException("Role cannot be null or empty.");
+        }
+        if (!role.equalsIgnoreCase("Admin")) {
+            throw new IllegalArgumentException("Role must be 'Admin' only.");
+        }
+
+        // Validate Working Hours
+        if (workingHours < 0 || workingHours > 24) {
+            throw new IllegalArgumentException("Working hours must be between 0 and 24.");
+        }
+
+        // If validation passes, create the Admin
+        adminDAO.createNewAdmin(username, password, dateOfBirth, role, workingHours);
     }
 
     public int getNumberOfCustomers(){
@@ -222,6 +264,8 @@ public class AdminService extends UserService {
         }
         return orders;
     }
+
+
 
 
 

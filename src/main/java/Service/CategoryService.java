@@ -93,6 +93,10 @@ public class CategoryService {
         }
     }
 
+    public Category parseCategory(String input) {
+        return categoryDAO.parseCategory(input);
+    }
+
 
 
 }

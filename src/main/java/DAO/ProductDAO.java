@@ -2,6 +2,8 @@ package DAO;
 import Database.Database;
 import Entity.Category;
 import Entity.Product;
+import Exceptions.ProductNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,11 @@ public class ProductDAO implements GenericDAO<Product> {
         return product;
     }
 
+    public Product createExistingProduct(int id,String name, double price, Category category, int quantity){
+        Product product=new Product(id,name,price,category,quantity);
+        return product;
+    }
+
     public void update(Product updatedProduct) {
         for (Product product : Database.products) {
             if (product.getId() == updatedProduct.getId()) {
@@ -40,11 +47,14 @@ public class ProductDAO implements GenericDAO<Product> {
     }
 
     //deleting a certain product from the database
-    public void delete(int id) {
-        for (Product product : Database.products) {
-            if (product.getId() == id) {
-                Database.products.remove(product);
-            }
+    public void delete(int productId) {
+        // Find the product in the backend list
+        Product productToDelete = getById(productId);
+        if (productToDelete != null) {
+            Database.products.remove(productToDelete); // Remove from backend list
+        } else {
+            // If the product does not exist, throw an exception
+            throw new ProductNotFoundException("Product with ID " + productId + " not found.");
         }
     }
 
@@ -81,6 +91,22 @@ public class ProductDAO implements GenericDAO<Product> {
 
     public int getProductId(Product product){
         return product.getId();
+    }
+
+    public String getProductName(Product product){
+        return product.getName();
+    }
+
+    public Category getProductCategory(Product product){
+        return product.getCategory();
+    }
+
+    public double getProductPrice(Product product){
+        return product.getPrice();
+    }
+
+    public int getProductQuantity(Product product){
+        return product.getQuantity();
     }
 
 

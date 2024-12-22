@@ -61,6 +61,14 @@ public class CategoryDAO implements GenericDAO<Category> {
                 category.getName() != null && category.getProductsInCategory()!= null;
     }
 
+    public Category parseCategory(String input) {
+        // Optional additional parsing/validation logic
+        if (input == null || input.isBlank()) {
+            throw new IllegalArgumentException("Category name cannot be empty.");
+        }
+        return new Category(input.trim());
+    }
+
 
 
 
