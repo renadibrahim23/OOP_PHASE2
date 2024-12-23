@@ -6,7 +6,7 @@ import DAO.CustomerDAO;
 import Entity.Cart;
 import Entity.Product;
 import Entity.Customer;
-import Entity.Order;
+import Entity.Cart;
 import Database.Database;
 
 import java.util.List;
@@ -24,6 +24,7 @@ public class CartService {
         this.cartDAO = cartDAO;
         this.customerDAO = customerDAO;
     }
+
 
     //changed
     public void addToCart(int userId, String productName, int quantity) {
