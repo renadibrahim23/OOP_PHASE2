@@ -6,18 +6,26 @@ import Exceptions.ProductNotFoundException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import Service.*;
 import DAO.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Optional;
 
 public class AdminDashBoard extends Application {
 
@@ -26,6 +34,10 @@ public class AdminDashBoard extends Application {
     private CategoryService categoryService=new CategoryService();
     private ObservableList<Product>productList;
     private TableView<Product> productTable;
+    private ObservableList<Admin>adminsList;
+    private TableView<Admin>adminsTable;
+
+    public Scene adminDashboardScene;
 
     @Override
     public void start(Stage primaryStage) {
@@ -39,14 +51,17 @@ public class AdminDashBoard extends Application {
         Button customersBtn = new Button("Manage Customers");
         Button viewReportsBtn = new Button("View Reports");
         Button productsBtn = new Button("Manage Products");
-        Button settingsBtn = new Button("Settings");
+        Button adminsBtn = new Button("Manage Admins");
+
+        //Button settingsBtn = new Button("Settings");
 
         customersBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         viewReportsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         productsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
-        settingsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
+        adminsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
 
-        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, viewReportsBtn, productsBtn, settingsBtn);
+
+        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, viewReportsBtn, productsBtn,adminsBtn);
 
         // Right Pane
         StackPane rightPane = new StackPane();
@@ -62,7 +77,7 @@ public class AdminDashBoard extends Application {
         root.setCenter(rightPane);
 
         // Scene for Admin Dashboard
-        Scene adminDashboardScene = new Scene(root, 900, 600);
+        adminDashboardScene = new Scene(root, 900, 600);
 
         // Set Button Actions to Navigate to Other Pages
         customersBtn.setOnAction(e -> {
@@ -78,6 +93,11 @@ public class AdminDashBoard extends Application {
         productsBtn.setOnAction(e -> {
             Scene productsScene = createProductsScene(primaryStage, adminDashboardScene);
             primaryStage.setScene(productsScene);
+        });
+
+        adminsBtn.setOnAction(e -> {
+            Scene adminsScene = createAdminsScene(primaryStage, adminDashboardScene);
+            primaryStage.setScene(adminsScene);
         });
 
         /*
@@ -161,6 +181,77 @@ public class AdminDashBoard extends Application {
         return new Scene(layout, 900, 600);
     }
 
+    private Scene createAdminsScene(Stage stage, Scene previousScene) {
+        VBox layout = new VBox(15); // Root layout
+        layout.setStyle("-fx-padding: 20px; -fx-background-color: #f4f4f4;");
+
+        Label label = new Label("Manage Admins");
+        label.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+        // TableView for displaying admins
+        adminsTable = new TableView<>();
+        TableColumn<Admin, String> adminIdCol = new TableColumn<>("Admin ID");
+        adminIdCol.setCellValueFactory(new PropertyValueFactory<>("adminId"));
+
+        TableColumn<Admin, String> adminUserNameCol = new TableColumn<>("Username");
+        adminUserNameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
+
+        TableColumn<Admin, String> roleCol = new TableColumn<>("Role");
+        roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
+
+        TableColumn<Admin, Double> workingHoursCol = new TableColumn<>("Working Hours");
+        workingHoursCol.setCellValueFactory(new PropertyValueFactory<>("workingHours"));
+
+        adminsTable.getColumns().addAll(adminIdCol, adminUserNameCol, roleCol, workingHoursCol);
+        adminsTable.setItems(adminsList); // Bind the admin list to the table
+
+        // Buttons for actions
+        Button addButton = new Button("Add Admin");
+        addButton.setOnAction(e -> openAddAdminForm(stage));
+
+        Button deleteButton = new Button("Delete Selected Admin");
+        deleteButton.setOnAction(e -> {
+            // Get the selected admin
+            Admin selectedAdmin = adminsTable.getSelectionModel().getSelectedItem();
+            if (selectedAdmin != null) {
+                // Show confirmation dialog
+                Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmationAlert.setTitle("Delete Admin");
+                confirmationAlert.setHeaderText("Are you sure you want to delete this admin?");
+                confirmationAlert.setContentText("Admin: " + selectedAdmin.getUsername());
+                Optional<ButtonType> result = confirmationAlert.showAndWait();
+
+                if (result.isPresent() && result.get() == ButtonType.OK) {
+                    // Remove admin from the list
+                    adminsList.remove(selectedAdmin);
+                }
+            } else {
+                // Show warning if no admin is selected
+                Alert warningAlert = new Alert(Alert.AlertType.WARNING);
+                warningAlert.setTitle("No Selection");
+                warningAlert.setHeaderText("No admin selected");
+                warningAlert.setContentText("Please select an admin to delete.");
+                warningAlert.showAndWait();
+            }
+        });
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> stage.setScene(previousScene)); // Navigate back to the previous scene
+
+        // Layout setup
+        HBox buttonBox = new HBox(10, addButton, deleteButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        layout.getChildren().addAll(label, adminsTable, buttonBox);
+
+        return new Scene(layout, 800, 600); // Return the final scene
+    }
+
+
+
+
+
+
     // Create "View Reports" Scene
     private Scene createReportsScene(Stage stage, Scene previousScene) {
         VBox layout = new VBox(15);
@@ -176,6 +267,7 @@ public class AdminDashBoard extends Application {
     }
 
     // Create "Settings" Scene
+    /*
     private Scene createSettingsScene(Stage stage, Scene previousScene,Admin currentAdmin) {
         VBox layout = new VBox(15);
         layout.setStyle("-fx-padding: 20px; -fx-background-color: #f4f4f4;");
@@ -218,11 +310,13 @@ public class AdminDashBoard extends Application {
 
         Button backButton = new Button("Back");
         backButton.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white;");
-        backButton.setOnAction(e -> stage.setScene(previousScene));
+        backButton.setOnAction(e -> stage.setScene(adminDashboardScene));
         layout.getChildren().addAll(label, backButton);
 
         return new Scene(layout, 900, 600);
     }
+
+     */
 
 
 
@@ -322,7 +416,7 @@ public class AdminDashBoard extends Application {
         });
         // Back button
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> stage.setScene(previousScene));
+        backButton.setOnAction(e -> stage.setScene(adminDashboardScene));
 
         // Layout setup
         layout.getChildren().addAll(label, productTable, addButton, updateButton, deleteButton, backButton);
@@ -606,7 +700,145 @@ public class AdminDashBoard extends Application {
         stage.setScene(updateProductScene);
     }
 
+    private void openAddAdminForm(Stage stage) {
+        Stage formStage = new Stage(); // New window for the add admin form
+        formStage.setTitle("Add Admin");
 
+        VBox formLayout = new VBox(10); // Layout with spacing
+        formLayout.setStyle("-fx-padding: 20px;");
+
+        // Form Fields
+        TextField adminIdField = new TextField();
+        adminIdField.setPromptText("Enter Admin ID");
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Enter Username");
+
+        TextField roleField = new TextField();
+        roleField.setPromptText("Enter Role");
+
+        TextField workingHoursField = new TextField();
+        workingHoursField.setPromptText("Enter Working Hours");
+
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPromptText("Select Date of Birth");
+
+        TextField passwordField = new TextField();
+        passwordField.setPromptText("Enter Password");
+
+        // Error labels for validation messages
+        Label usernameErrorLabel = new Label();
+        Label passwordErrorLabel = new Label();
+        Label roleErrorLabel = new Label();
+        Label workingHoursErrorLabel = new Label();
+        Label dateErrorLabel = new Label();
+
+        // Style error labels (optional)
+        usernameErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 10px;");
+        passwordErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 10px;");
+        roleErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 10px;");
+        workingHoursErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 10px;");
+        dateErrorLabel.setStyle("-fx-text-fill: red; -fx-font-size: 10px;");
+
+        // Save button logic
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction(e -> {
+            // Clear all error labels on each save attempt
+            usernameErrorLabel.setText("");
+            passwordErrorLabel.setText("");
+            roleErrorLabel.setText("");
+            workingHoursErrorLabel.setText("");
+            dateErrorLabel.setText("");
+
+            // Retrieve form values
+            String adminId = adminIdField.getText(); // Admin ID isn't validated in this example
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            String role = roleField.getText();
+            String workingHoursText = workingHoursField.getText();
+            LocalDate selectedDate = datePicker.getValue();
+
+            // Basic empty field validation
+            if (adminId.isEmpty() || username.isEmpty() || password.isEmpty() || role.isEmpty() || workingHoursText.isEmpty() || selectedDate == null) {
+                if (username.isEmpty()) usernameErrorLabel.setText("Username is required.");
+                if (password.isEmpty()) passwordErrorLabel.setText("Password is required.");
+                if (role.isEmpty()) roleErrorLabel.setText("Role is required.");
+                if (workingHoursText.isEmpty()) workingHoursErrorLabel.setText("Working Hours are required.");
+                if (selectedDate == null) dateErrorLabel.setText("Date of Birth is required.");
+                return; // Stop execution until all fields are filled
+            }
+
+            try {
+                // Parse working hours
+                double workingHours = Double.parseDouble(workingHoursText);
+
+                // Convert LocalDate to Date
+                Date dateOfBirth = java.sql.Date.valueOf(selectedDate);
+
+                // Call service method
+                adminService.createNewAdmin(username, password, dateOfBirth, role, workingHours);
+
+                // Show success dialog
+                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+                successAlert.setTitle("Success");
+                successAlert.setHeaderText("Admin Created");
+                successAlert.setContentText("Admin " + username + " has been successfully created.");
+                successAlert.showAndWait();
+
+                formStage.close(); // Close the form if a new admin is created successfully
+
+            } catch (NumberFormatException ex) {
+                // Handle invalid working hours input
+                workingHoursErrorLabel.setText("Working Hours must be a valid number.");
+            } catch (IllegalArgumentException ex) {
+                // Handle validation errors from adminService.createNewAdmin
+                String errorMessage = ex.getMessage();
+
+                // Map error messages to corresponding labels
+                if (errorMessage.contains("Username")) {
+                    usernameErrorLabel.setText(errorMessage);
+                } else if (errorMessage.contains("Password")) {
+                    passwordErrorLabel.setText(errorMessage);
+                } else if (errorMessage.contains("Date of Birth")) {
+                    dateErrorLabel.setText(errorMessage);
+                } else if (errorMessage.contains("Role")) {
+                    roleErrorLabel.setText(errorMessage);
+                } else if (errorMessage.contains("Working hours")) {
+                    workingHoursErrorLabel.setText(errorMessage);
+                }
+            } catch (Exception ex) {
+                // Handle unexpected exceptions
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                errorAlert.setTitle("Error");
+                errorAlert.setHeaderText("Unexpected Error");
+                errorAlert.setContentText("An unexpected error occurred while saving the admin. Please try again.");
+                errorAlert.showAndWait();
+            }
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(e -> formStage.close()); // Close the form on cancel
+
+        // Layout for Save/Cancel buttons
+        HBox buttonBox = new HBox(10, saveButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        // Add all components to the form layout
+        formLayout.getChildren().addAll(
+                new Label("Admin ID:"), adminIdField,
+                new Label("Username:"), usernameField, usernameErrorLabel,
+                new Label("Role:"), roleField, roleErrorLabel,
+                new Label("Working Hours:"), workingHoursField, workingHoursErrorLabel,
+                new Label("Date of Birth:"), datePicker, dateErrorLabel,
+                new Label("Password:"), passwordField, passwordErrorLabel,
+                buttonBox
+        );
+
+        Scene formScene = new Scene(formLayout, 400, 400);
+        formStage.setScene(formScene);
+        formStage.initModality(Modality.APPLICATION_MODAL); // Block interaction with main window
+        formStage.show();
+    }
     public static void main(String[] args) {
         launch(args);
     }

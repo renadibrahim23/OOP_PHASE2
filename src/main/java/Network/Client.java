@@ -22,7 +22,6 @@ public class Client {
     public void sendMessage(){ //this message which the clientHandler wll read
         try(Scanner scanner = new Scanner(System.in)){
             while(socket.isConnected()){
-                System.out.println("Your message: ");
                 String messageToSent = scanner.nextLine();
                 bufferedWriter.write(messageToSent);
                 bufferedWriter.newLine();

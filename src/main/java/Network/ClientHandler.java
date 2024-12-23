@@ -53,17 +53,47 @@ public class ClientHandler implements Runnable{
     @Override
     public void run() {
         try {
-            loginUser();
+            loginUser(); // Handles login functionality
+
             String message;
             while ((message = bufferedReader.readLine()) != null) {
-                System.out.println(username + ": " + message);
+                     if (message.startsWith("@")) { // Direct message to specific user
+                    // Handle "@username: message" format
+                    String[] parts = message.substring(1).split(":", 2);
+                    if (parts.length == 2) {
+                        String recipientUsername = parts[0].trim();  // The recipient's username
+                        String content = parts[1].trim();           // The message content
+                        forwardMessage(recipientUsername, content); // Send to target recipient
+                    } else {
+                        bufferedWriter.write("Invalid format! Use @username: message.");
+                        bufferedWriter.newLine();
+                        bufferedWriter.flush();
+                    }
+                } else {
+                    // Handle other unknown commands
+                    bufferedWriter.write("Unknown command!");
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                }
             }
         } catch (IOException e) {
             closeEverything();
         }
     }
 
+    private void forwardMessage(String recipientUsername, String messageContent) throws IOException {
+        ClientHandler recipientHandler = activeClients.get(recipientUsername); // Get recipient by username
 
+        if (recipientHandler != null) {
+            recipientHandler.bufferedWriter.write(this.username + " says: " + messageContent); // Include sender info
+            recipientHandler.bufferedWriter.newLine();
+            recipientHandler.bufferedWriter.flush();
+        } else {
+            bufferedWriter.write("Recipient not found: " + recipientUsername);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        }
+    }
 
     private void loginUser() throws IOException {
         bufferedWriter.write("Enter username: ");
@@ -100,13 +130,13 @@ public class ClientHandler implements Runnable{
 
 
 
-
+//
 //    private void handleAdminMessage(String message) throws IOException {
 //        String[] parts = message.split(":", 2);
 //        String recipient = parts[0].trim();
 //        String content = parts[1].trim();
 //
-//        ClientHandler recipientHandler = clientHandlers.get(recipient);
+//        ClientHandler recipientHandler = activeClients.get(recipient);
 //        if (recipientHandler != null) {
 //            recipientHandler.bufferedWriter.write("Admin: " + content);
 //            recipientHandler.bufferedWriter.newLine();
@@ -119,16 +149,16 @@ public class ClientHandler implements Runnable{
 //    }
 
 
-//    private void sendToAdmin(String message) throws IOException {
-//        for (ClientHandler handler : clientHandlers.values()) {
-//            if (handler.isAdmin) {
-//                handler.bufferedWriter.write(username + ": " + message);
-//                handler.bufferedWriter.newLine();
-//                handler.bufferedWriter.flush();
-//                break;
-//            }
-//        }
-//    }
+    private void sendToAdmin(String message) throws IOException {
+        for (ClientHandler handler : activeClients.values()) {
+            if (handler.isAdmin) {
+                handler.bufferedWriter.write(username + ": " + message);
+                handler.bufferedWriter.newLine();
+                handler.bufferedWriter.flush();
+                break;
+            }
+        }
+    }
 
     private void closeEverything() {
         try {

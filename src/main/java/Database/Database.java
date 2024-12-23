@@ -16,28 +16,23 @@ public class Database {
     public static List<Category> categories = new ArrayList<>();
     public static List<Cart> carts = new ArrayList<>();
     public static List<Admin> admins = new ArrayList<>();
-    private static CartService cartService = new CartService();
-    private static OrderService orderService = new OrderService();
 
     private static AdminService adminService = new AdminService();
     private static CustomerService customerService= new CustomerService();
     static {
         Date date = new Date();
-        adminService.createNewAdmin("admin123", "HelloSupermarket67.", date, "manager", 5.5);
-        customerService.createNewCustomer("renadibrahim23", "Password123.", date, "1 zamalek 1", Customer.Gender.FEMALE);
-        customerService.createNewCustomer("john-ki29", "oop123.", date, "24 salah salem", Customer.Gender.MALE);
-        customerService.createNewCustomer("Naira05", "dsa2424.", date, "12 heliopolis ", Customer.Gender.FEMALE);
-        customerService.createNewCustomer("esraa1000", "neural123.", date, "35 madinet nasr", Customer.Gender.FEMALE);
+        adminService.createNewAdmin("admin123","HelloSupermarket67.",date,"manager",5.5);
+        customerService.createNewCustomer("renadibrahim23","Password123.",date,"1 zamalek 1", Customer.Gender.FEMALE);
+        customerService.createNewCustomer("john-ki29","oop123.",date,"24 salah salem", Customer.Gender.MALE);
+        customerService.createNewCustomer("Naira05","dsa2424.",date,"12 heliopolis ", Customer.Gender.FEMALE);
+        customerService.createNewCustomer("esraa1000","neural123.",date,"35 madinet nasr", Customer.Gender.FEMALE);
 
-        cartService.addToCart(1, "Apple", 2);
-        cartService.addToCart(2, "Orange", 3);
-        cartService.addToCart(3, "Banana", 1);
-        cartService.addToCart(4, "sugar", 4);
+
+
+
+
 
     }
-
-
-
 
 
 /*
