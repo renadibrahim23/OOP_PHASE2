@@ -1,18 +1,25 @@
 package Entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Cart {
     private static int idCounter = 0; // static counter for generating IDs
     private List<Product> addedProducts;
     private double totalPrice;
     private int cartId;
+    private Map<Product, Integer> products;
     //to connect each user by its cart
     private int userId;
 
-    public Cart(){
+    public Cart(int userId){
         this.cartId=++idCounter;
+        this.userId = userId;
     }
+
+
     public double getTotalPrice() {
         return totalPrice;
     }

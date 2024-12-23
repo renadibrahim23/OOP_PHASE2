@@ -28,38 +28,46 @@ public class CartService {
 
     //changed
     public void addToCart(int userId, String productName, int quantity) {
-        //get the cart of this user
-        Cart userCart = cartDAO.getById(cartDAO.getDefaultCartId(userId));
-        if (userCart == null) {
+        // Get the user's cart by using the default cart ID for the user
+        int defaultCartId = cartDAO.getDefaultCartId(userId);
+
+        if (defaultCartId == -1) {
             throw new IllegalStateException("No cart found for user with ID " + userId);
         }
 
-        //check if the product exists in the supermarket database
+        Cart userCart = cartDAO.getById(defaultCartId);
+
+        if (userCart == null) {
+            throw new IllegalStateException("Unable to retrieve the cart for user with ID " + userId);
+        }
+
+        // Check if the product exists in the supermarket database
         Product databaseProduct = null;
         for (Product product : Database.products) {
-            if (product.getName().equals(productName)) {
+            if (product.getName().equalsIgnoreCase(productName)) { // Case insensitive name match
                 databaseProduct = product;
                 break;
             }
         }
 
         if (databaseProduct == null) {
-            throw new IllegalArgumentException("Product " + productName + " not found in the supermarket.");
+            throw new IllegalArgumentException("Product " + productName + " not found in the supermarket database.");
         }
 
-        // add or update the product in the cart
+        // Add or update the product in the cart
         List<Product> products = userCart.getAddedProducts();
         boolean inCart = false;
 
         for (Product product : products) {
-            if (product.getName().equals(productName)) {
-                product.setQuantity(product.getQuantity() + quantity);
+            if (product.getName().equalsIgnoreCase(productName)) { // Case insensitive name match
+                product.setQuantity(product.getQuantity() + quantity); // Update quantity of existing product
                 inCart = true;
                 break;
             }
         }
 
         if (!inCart) {
+            // If the product is not in the cart, create a new product instance and add it to the cart
             Product newProduct = new Product();
             newProduct.setName(productName);
             newProduct.setPrice(databaseProduct.getPrice());
@@ -67,17 +75,18 @@ public class CartService {
             products.add(newProduct);
         }
 
-        // update the cart's total price
+        // Update the cart's total price
         double updatedTotalPrice = 0.0;
         for (Product product : products) {
-            updatedTotalPrice += product.getPrice() * product.getQuantity();
+            updatedTotalPrice += product.getPrice() * product.getQuantity(); // Calculate total price
         }
         userCart.setTotalPrice(updatedTotalPrice);
 
-        // update the cart in the database
+        // Update the cart in the database
         cartDAO.update(userCart);
-    }
 
+        System.out.println("Product " + productName + " successfully added/updated in the cart for user ID " + userId);
+    }
 
     public void removeFromCart(int userId, String productName, int quantity) {
         //get the cart of this user

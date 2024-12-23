@@ -34,22 +34,32 @@ public class CartDAO implements GenericDAO<Cart> {
     }
 
     public void add(Cart cart) {
-        for (Cart ExistingCart : Database.carts) { // check if the cart exists
-            if (ExistingCart.getCartId() == cart.getCartId()) {
-                throw new IllegalArgumentException("cart with ID " + cart.getCartId() + " already exists");
-            } else {
-                Database.carts.add(cart);
+        for (Cart existingCart : Database.carts) {
+            if (existingCart.getCartId() == cart.getCartId()) {
+                throw new IllegalArgumentException("Cart with ID " + cart.getCartId() + " already exists");
             }
         }
+        // Add only if no cart with the same ID is found
+        Database.carts.add(cart);
     }
 
-    public int getDefaultCartId(int userId) {
-        for (Cart cart : Database.carts) { // Assuming `carts` is a list of all carts
-            if (cart.getUserId() == userId) { // Filter carts by `userId`
+    public static int getDefaultCartId(int userId) {
+        for (Cart cart : Database.carts) {
+            if (cart.getUserId() == userId) {
                 return cart.getCartId();
             }
         }
-        throw new IllegalStateException("No cart found for user ID: " + userId);
+        // Instead of throwing an exception, return -1 or handle gracefully
+        return -1; // Returning -1 to indicate no cart found for the given user
+    }
+
+    public Cart findCartByCustomerId(int customerId) {
+        for (Cart cart : Database.carts) { // Searches in the global carts list
+            if (cart.getUserId() == customerId) {
+                return cart;
+            }
+        }
+        return null; // No cart found for this ID
     }
 
 

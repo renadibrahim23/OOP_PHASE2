@@ -230,12 +230,12 @@ public class AdminService extends UserService {
         }
 
         // Validate Role
-        if (role == null || role.trim().isEmpty()) {
-            throw new IllegalArgumentException("Role cannot be null or empty.");
-        }
-        if (!role.equalsIgnoreCase("Admin")) {
-            throw new IllegalArgumentException("Role must be 'Admin' only.");
-        }
+//        if (role == null || role.trim().isEmpty()) {
+//            throw new IllegalArgumentException("Role cannot be null or empty.");
+//        }
+//        if (!role.equalsIgnoreCase("Admin")) {
+//            throw new IllegalArgumentException("Role must be 'Admin' only.");
+//        }
 
         // Validate Working Hours
         if (workingHours < 0 || workingHours > 24) {
