@@ -26,6 +26,7 @@ public class AdminDashBoard extends Application {
     private CategoryService categoryService=new CategoryService();
     private ObservableList<Product>productList;
     private TableView<Product> productTable;
+    public Scene adminDashboardScene;
 
     @Override
     public void start(Stage primaryStage) {
@@ -39,14 +40,15 @@ public class AdminDashBoard extends Application {
         Button customersBtn = new Button("Manage Customers");
         Button viewReportsBtn = new Button("View Reports");
         Button productsBtn = new Button("Manage Products");
-        Button settingsBtn = new Button("Settings");
+
+        //Button settingsBtn = new Button("Settings");
 
         customersBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         viewReportsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         productsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
-        settingsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
 
-        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, viewReportsBtn, productsBtn, settingsBtn);
+
+        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, viewReportsBtn, productsBtn);
 
         // Right Pane
         StackPane rightPane = new StackPane();
@@ -62,7 +64,7 @@ public class AdminDashBoard extends Application {
         root.setCenter(rightPane);
 
         // Scene for Admin Dashboard
-        Scene adminDashboardScene = new Scene(root, 900, 600);
+        adminDashboardScene = new Scene(root, 900, 600);
 
         // Set Button Actions to Navigate to Other Pages
         customersBtn.setOnAction(e -> {
@@ -176,6 +178,7 @@ public class AdminDashBoard extends Application {
     }
 
     // Create "Settings" Scene
+    /*
     private Scene createSettingsScene(Stage stage, Scene previousScene,Admin currentAdmin) {
         VBox layout = new VBox(15);
         layout.setStyle("-fx-padding: 20px; -fx-background-color: #f4f4f4;");
@@ -218,11 +221,13 @@ public class AdminDashBoard extends Application {
 
         Button backButton = new Button("Back");
         backButton.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white;");
-        backButton.setOnAction(e -> stage.setScene(previousScene));
+        backButton.setOnAction(e -> stage.setScene(adminDashboardScene));
         layout.getChildren().addAll(label, backButton);
 
         return new Scene(layout, 900, 600);
     }
+
+     */
 
 
 
@@ -322,7 +327,7 @@ public class AdminDashBoard extends Application {
         });
         // Back button
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> stage.setScene(previousScene));
+        backButton.setOnAction(e -> stage.setScene(adminDashboardScene));
 
         // Layout setup
         layout.getChildren().addAll(label, productTable, addButton, updateButton, deleteButton, backButton);
