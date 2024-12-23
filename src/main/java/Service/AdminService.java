@@ -22,6 +22,9 @@ public class AdminService extends UserService {
     private final CustomerDAO customerDAO=new CustomerDAO();
     private final OrderDAO orderDAO=new OrderDAO();
     private final OrderService orderService=new OrderService();
+    private String lastMessage = "";
+    private String signUpMessage;
+
 
 
 
@@ -51,9 +54,15 @@ public class AdminService extends UserService {
 
     }
 
+    public String getLastMessage(){
+        return lastMessage;
+    }
 
 
-    @Override
+
+
+
+    /*
     public void signUp(String username, String password, Date dateOfBirth) {
         if(username==null || password==null || dateOfBirth==null){
             System.out.println("Please make sure to fill out all fields");
@@ -94,7 +103,7 @@ public class AdminService extends UserService {
         adminDAO.createNewAdmin(username,password,dateOfBirth,role,workingHours);
         System.out.println("Signup successful!");
 
-    }
+    }*/
     public void CreateProduct(String name, double price, Category category, int quantity){
         productService.createProduct(name,price,category,quantity);
     }

@@ -15,7 +15,80 @@ public class CustomerService extends UserService{
     private final CustomerDAO customerDAO= new CustomerDAO();
     private OrderDAO orderDAO =new OrderDAO();
     private OrderService orderService= new OrderService();
-    private CartService cartService= new CartService();;
+    private CartService cartService= new CartService();
+    private String lastMessage = "";
+    private String signUpMessage;
+
+    public boolean signUp(String username, String password, Date dateOfBirth, String address, String genderInput) {
+        // Validate username
+        if (!UserService.isValidUsername(username)) {
+            signUpMessage = UserService.getMessage();
+            return false;
+        }
+
+        // Validate password
+        if (!UserService.isValidPassword(password)) {
+            signUpMessage = UserService.getMessage();
+            return false;
+        }
+
+
+        // Check if username is already taken
+        if (customerDAO.getCustomerByUsername(username) != null) {
+            signUpMessage = "Username already taken.";
+            return false;
+        }
+
+
+        // Validate date of birth
+        if (dateOfBirth == null || dateOfBirth.after(new Date())) {
+            signUpMessage = "Invalid date of birth.";
+            return false;
+        }
+
+        // Validate gender
+        Customer.Gender gender;
+        try {
+            gender = Customer.Gender.valueOf(genderInput.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            signUpMessage = "Invalid input. Please enter one of the following: " + Customer.Gender.getValidValues();
+            return false;
+        }
+
+        // Create new customer and save to database
+        customerDAO.createNewCustomer(username, password, dateOfBirth, address, gender);
+        signUpMessage = "Signup successful!";
+        return true;
+    }
+
+
+    public String getSignUpMessage(){
+        return signUpMessage;
+    }
+
+
+    public boolean logIn(String username,String password){
+        Customer customer=customerDAO.getCustomerByUsername(username);
+
+        if(customer==null){
+            lastMessage = "Account not found. Please sign up first!";
+            return false;
+        }
+
+        if(!((customer.getPassword()).equals(password))){
+            lastMessage="Wrong password entered.";
+            return false;
+        }
+
+        lastMessage="Login successful!";
+        return true;
+    }
+    public String getWarningMessage(){
+        return lastMessage;
+    }
+
+
+
 
     public CustomerService(){}
     public CustomerService(OrderService orderService) {
@@ -61,6 +134,7 @@ public class CustomerService extends UserService{
         }
 
     }
+    /*
     public boolean logIn(String username,String password){
 
 
@@ -79,7 +153,7 @@ public class CustomerService extends UserService{
 
         System.out.println("Login successful!");
         return true;
-    }
+    }*/
 
 
 

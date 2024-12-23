@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.phase2.LoginController">
+    <children>
+        <BorderPane layoutX="200.0" layoutY="100.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
+            <left>
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="407.0" prefWidth="270.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label layoutX="27.0" layoutY="21.0" text="Login">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <effect>
+                                <Glow />
+                            </effect>
+                        </Label>
+                        <Label layoutX="14.0" layoutY="59.0" text="dont have an account yet?" textFill="#9c9393" />
+                        <Label layoutX="13.0" layoutY="110.0" text="Username">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="15.0" layoutY="200.0" text="Password">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Label>
+                        <Button fx:id="loginasAdmin" layoutX="55.0" layoutY="276.0" mnemonicParsing="false" onAction="#loginAsAdmin" prefHeight="31.0" prefWidth="166.0" style="-fx-background-color: #dc0ea9;" text="Login as Admin" textFill="#faf7f7" />
+                        <Button fx:id="signupButton" layoutX="180.0" layoutY="52.0" mnemonicParsing="false" onAction="#goToSignupPage" prefHeight="32.0" prefWidth="82.0" style="-fx-background-color: #dc0ea9;" text="SignUp" textFill="#f4f2f2" />
+                        <TextField fx:id="usernameField" layoutX="86.0" layoutY="107.0" prefHeight="27.0" prefWidth="149.0" promptText="Username" />
+                        <PasswordField fx:id="passwordField" layoutX="87.0" layoutY="198.0" promptText="Password" />
+                        <Button fx:id="loginasCustomer" layoutX="55.0" layoutY="322.0" mnemonicParsing="false" onAction="#loginAsCustomer" prefHeight="31.0" prefWidth="166.0" style="-fx-background-color: #dc0ea9;" text="Login as Customer" textFill="#f7f1f1">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Button>
+                        <Label fx:id="warningMessage" alignment="CENTER" layoutX="16.0" layoutY="227.0" prefHeight="45.0" prefWidth="234.0" textFill="#df0505">
+                            <font>
+                                <Font size="13.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </AnchorPane>
+            </left>
+            <right>
+                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="400.0" prefWidth="332.0" style="-fx-background-color: skyblue;" BorderPane.alignment="CENTER">
+                    <children>
+                        <ImageView fitHeight="150.0" fitWidth="160.0" layoutX="66.0" layoutY="97.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="https://cdn-icons-png.flaticon.com/512/3081/3081840.png" />
+                            </image>
+                        </ImageView>
+                    </children>
+                </AnchorPane>
+            </right>
+        </BorderPane>
+    </children>
+</AnchorPane>
