@@ -33,7 +33,6 @@ public class AdminService extends UserService {
 
         }
 
-
         Admin admin=adminDAO.getAdminByUsername(username);
 
         if(admin==null){

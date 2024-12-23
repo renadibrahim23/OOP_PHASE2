@@ -21,15 +21,11 @@ public class Database {
     private static CustomerService customerService= new CustomerService();
     static {
         Date date = new Date();
-        adminService.createNewAdmin("admin123","HelloSupermarket67.",date,"manager",5.5);
+        adminService.createNewAdmin("admin","HelloSupermarket67.",date,"manager",5.5);
         customerService.createNewCustomer("renadibrahim23","Password123.",date,"1 zamalek 1", Customer.Gender.FEMALE);
         customerService.createNewCustomer("john-ki29","oop123.",date,"24 salah salem", Customer.Gender.MALE);
         customerService.createNewCustomer("Naira05","dsa2424.",date,"12 heliopolis ", Customer.Gender.FEMALE);
         customerService.createNewCustomer("esraa1000","neural123.",date,"35 madinet nasr", Customer.Gender.FEMALE);
-
-
-
-
 
 
     }
