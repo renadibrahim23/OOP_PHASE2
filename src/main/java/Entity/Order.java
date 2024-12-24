@@ -9,9 +9,17 @@ public class Order {
     private double tax;
     private double shippingFee;
     private double checkOutTotal;
+    private String product;
+    private double price;
+
 
     public Order(){this.orderId=++idCounter;}
 
+    public Order(String product , double price){
+        this.product = product;
+        this.price = price;
+
+    }
     public Order(String paymentMethod, double discount, double tax, double shippingFee, int userId) {
         this.paymentMethod = paymentMethod;
         this.discount = discount;
@@ -75,5 +83,29 @@ public class Order {
 
     public String toString(){
         return "OrderId: "+orderId+" CheckoutTotal: "+checkOutTotal;
+    }
+
+    public static int getIdCounter() {
+        return idCounter;
+    }
+
+    public static void setIdCounter(int idCounter) {
+        Order.idCounter = idCounter;
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public void setProduct(String product) {
+        this.product = product;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

@@ -182,15 +182,20 @@ public class CartService {
 
 
     //helper functions for place order
-    private double calculateDiscount(double subtotal) {
+    public double calculateTotal(double subtotal, double discount, double tax, double shippingFee) {
+        return subtotal - discount + tax + shippingFee;
+    }
+
+
+    public double calculateDiscount(double subtotal) {
         return subtotal > 100 ? subtotal * 0.10 : 0.0; //if the subtotal larger than 100 the discount will be applied
     }
 
-    private double calculateTax(double amount) {
+    public double calculateTax(double amount) {
         return amount * 0.08;
     }
 
-    private double calculateShippingFee() {
+    public double calculateShippingFee() {
         return 5.0;
     }
 
@@ -234,4 +239,6 @@ public class CartService {
    public Cart getCartByCustomerId(int customerId){
         return cartDAO.findCartByCustomerId(customerId);
    }
+
+
 }

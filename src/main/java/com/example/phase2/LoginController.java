@@ -3,6 +3,7 @@ package com.example.phase2;
 import Entity.Customer;
 import GUI.AdminDashBoard;
 import GUI.CartWindow;
+import GUI.OrderWindow;
 import Service.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,6 +29,9 @@ public class LoginController {
     private PasswordField passwordField;
     @FXML
     private Label warningMessage;
+
+    @FXML
+    private Button checkoutButton;
 
     // Admin Login
 
@@ -91,7 +95,11 @@ public class LoginController {
                 e.printStackTrace();
             }
         }
+
+
     }
+
+
 
     // Navigate to Signup Page
     public void goToSignupPage(ActionEvent event) {

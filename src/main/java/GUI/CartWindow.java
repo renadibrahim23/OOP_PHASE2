@@ -16,12 +16,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
+import static javafx.application.Application.launch;
 
 public class CartWindow extends Application {
+
+    private Button checkoutButton;
 
     private final CartService cartService=new CartService();
     private final ObservableList<Product> cartProductList= FXCollections.observableArrayList(); // Observable list for cart products
@@ -37,7 +38,7 @@ public class CartWindow extends Application {
         this.customer = customer;
 
         userId = customer.getCustomerId(); // Initialize the cart service
-         // Observable list for cart items
+        // Observable list for cart items
     }
 
     public VBox createContent() {
@@ -64,7 +65,7 @@ public class CartWindow extends Application {
 
     /**
      * Initialize the mock data for the database.
-//     */
+     //     */
 //    private void refreshCartData() {
 //        cartProductList.clear();
 //        Cart cart = Database.getCartForUser(userId);
@@ -106,7 +107,6 @@ public class CartWindow extends Application {
             return null;
         }
     }
-
 
     private VBox createCartSection() {
         VBox section = new VBox(10);
@@ -168,10 +168,15 @@ public class CartWindow extends Application {
         // Button actions
         addButton.setOnAction(e -> showAddProductDialog());
         removeButton.setOnAction(e -> handleRemoveProduct());
-        checkoutButton.setOnAction(e -> handleCheckout());
+        checkoutButton.setOnAction(event -> {
+            // Pass primaryStage to handleCheckout method
+            handleCheckout((Stage) checkoutButton.getScene().getWindow());
+        });
 
         section.getChildren().addAll(addButton, removeButton, checkoutButton);
         return section;
+
+
     }
 
     /**
@@ -239,11 +244,39 @@ public class CartWindow extends Application {
         dialog.setTitle("Add Product");
         dialog.setHeaderText("Select product and enter quantity:");
 
-        // Create product dropdown and quantity fields
-        ComboBox<String> productDropdown = new ComboBox<>();
+        // Create product TreeView for categories and products
+        TreeView<String> productTree = new TreeView<>();
+        TreeItem<String> rootItem = new TreeItem<>("Categories");
+        rootItem.setExpanded(true);
+
+        // Manually group products by Category type
         for (Product product : Database.products) {
-            productDropdown.getItems().add(product.getName());
+            Category category = product.getCategory(); // Assume Product has getCategory() method
+            TreeItem<String> categoryItem = null;
+
+            // Check if the category already exists in the tree
+            for (TreeItem<String> item : rootItem.getChildren()) {
+                if (item.getValue().equals(category.getName())) { // Assume Category has getName() method
+                    categoryItem = item;
+                    break;
+                }
+            }
+
+            // If category doesn't exist, create it
+            if (categoryItem == null) {
+                categoryItem = new TreeItem<>(category.getName());
+                rootItem.getChildren().add(categoryItem);
+            }
+
+            // Add the product under its category
+            categoryItem.getChildren().add(new TreeItem<>(product.getName() + " - $" + product.getPrice()));
         }
+        productTree.setRoot(rootItem);
+        productTree.setShowRoot(false); // Hide the root "Categories"
+
+        // Adjust the size of the TreeView to make it smaller
+        productTree.setPrefSize(250, 150); // Width: 250px, Height: 150px
+
         TextField quantityField = new TextField();
 
         // Layout for the dialog
@@ -253,7 +286,7 @@ public class CartWindow extends Application {
         grid.setPadding(new Insets(20));
 
         grid.add(new Label("Product Name:"), 0, 0);
-        grid.add(productDropdown, 1, 0);
+        grid.add(productTree, 1, 0); // Add the TreeView to the grid
         grid.add(new Label("Quantity:"), 0, 1);
         grid.add(quantityField, 1, 1);
 
@@ -263,18 +296,27 @@ public class CartWindow extends Application {
         dialog.setResultConverter(buttonType -> {
             if (buttonType == ButtonType.OK) {
                 try {
-                    // Get the selected product name and quantity
-                    String productName = productDropdown.getValue();
-                    if (productName == null || productName.isEmpty()) {
+                    // Get the selected product and quantity
+                    TreeItem<String> selectedItem = productTree.getSelectionModel().getSelectedItem();
+                    if (selectedItem == null || !selectedItem.isLeaf()) {
                         throw new IllegalArgumentException("Please select a product.");
                     }
+
+                    // Extract product name from the selected item
+                    String selectedProductName = selectedItem.getValue().split(" - ")[0];
                     int quantity = Integer.parseInt(quantityField.getText().trim());
                     if (quantity <= 0) {
                         throw new IllegalArgumentException("Quantity must be greater than 0.");
                     }
 
+                    // Find the Product object using the product name
+                    Product selectedProduct = Database.products.stream()
+                            .filter(product -> product.getName().equals(selectedProductName))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Product not found."));
+
                     // Add the product to the cart using CartService
-                    cartService.addToCart(userId, productName, quantity);
+                    cartService.addToCart(userId, selectedProduct.getName(), quantity);
                     refreshCartData(); // Update UI with the new cart data
                     showSuccess("Success", "Product added to cart successfully!");
 
@@ -289,6 +331,7 @@ public class CartWindow extends Application {
 
         dialog.showAndWait();
     }
+
 
     private void handleRemoveProduct() {
         // Get the selected product from the table
@@ -308,30 +351,24 @@ public class CartWindow extends Application {
         }
     }
 
-    private void handleCheckout() {
+    private void handleCheckout(Stage stage) {
+        // Check if the cart is empty
         if (cartProductList.isEmpty()) {
-            showError("Error", "Your cart is empty!");
+            showError("Error", "Your cart is empty! Please add products before checking out.");
             return;
         }
 
-        // Show a dialog to get the payment method
-        TextInputDialog paymentDialog = new TextInputDialog();
-        paymentDialog.setTitle("Payment Method");
-        paymentDialog.setHeaderText("Enter your payment method:");
-        paymentDialog.setContentText("Payment Method:");
 
-        Optional<String> result = paymentDialog.showAndWait();
-        if (result.isPresent()) {
-            try {
-                // Place the order using CartService
-                cartService.placeOrder(userId);
-                refreshCartData(); // Clear cart after checkout
-                showSuccess("Success", "Your order has been placed successfully!");
-            } catch (Exception e) {
-                showError("Error", e.getMessage());
-            }
+        // Pass the selected products to the OrderWindow constructor
+        try {
+
+            OrderWindow orderWindow = new OrderWindow(cartProductList); // Pass cart items
+            orderWindow.start(stage);
+        } catch (Exception e) {
+            showError("Error", "Failed to navigate to Order Window: " + e.getMessage());
         }
     }
+
 
     public static void main(String[] args) {
         launch(args);

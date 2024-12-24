@@ -16,8 +16,8 @@ public class Database {
     public static List<Category> categories = new ArrayList<>();
     public static List<Cart> carts = new ArrayList<>();
     public static List<Admin> admins = new ArrayList<>();
-    private static CartService cartService = new CartService();
-    private static OrderService orderService = new OrderService();
+    public static CartService cartService = new CartService();
+    public static OrderService orderService = new OrderService();
 
     private static AdminService adminService = new AdminService();
     private static CustomerService customerService = new CustomerService();
@@ -30,7 +30,7 @@ public class Database {
         customerService.createNewCustomer("Naira05", "dsa2424.", date, "12 heliopolis ", Customer.Gender.FEMALE);
         customerService.createNewCustomer("esraa1000", "neural123.", date, "35 madinet nasr", Customer.Gender.FEMALE);
     }
-//    public static void initializeCart() {
+    //    public static void initializeCart() {
 //        // Iterate over each customer
 //        for (Customer customer : customers) {
 //            // If the customer doesn't already have a cart, create one
@@ -44,19 +44,19 @@ public class Database {
 //        cartService.addToCart(3, "Banana", 1);
 //        cartService.addToCart(4, "sugar", 4);
 //    }
-public static void initializeAdmins() {
-    if (!Database.admins.isEmpty()) {
-        return; // Prevent reinitialization
+    public static void initializeAdmins() {
+        if (!Database.admins.isEmpty()) {
+            return; // Prevent reinitialization
+        }
+
+        java.util.Date date = new java.util.Date();
+
+        // Creating customers
+        admins.add(new Admin("admin123", "HelloSupermarket67.", date, "manager", 5.5));
+
+
+
     }
-
-    java.util.Date date = new java.util.Date();
-
-    // Creating customers
-   admins.add(new Admin("admin123", "HelloSupermarket67.", date, "manager", 5.5));
-
-
-
-}
 
 
     public static void initializeCustomers() {
