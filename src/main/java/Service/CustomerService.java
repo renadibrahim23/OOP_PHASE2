@@ -3,10 +3,11 @@ package Service;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Scanner;
-
+import Database.Database;
 import DAO.*;
 import Entity.Customer;
 import Entity.Order;
+import GUI.CartWindow;
 import Network.ClientHandler;
 
 public class CustomerService extends UserService{
@@ -70,6 +71,12 @@ public class CustomerService extends UserService{
     public boolean logIn(String username,String password){
         Customer customer=customerDAO.getCustomerByUsername(username);
 
+        Customer loggedInCustomer = Database.customers.stream()
+                .filter(c -> c.getUsername().equals(username) && c.getPassword().equals(password))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+
+
         if(customer==null){
             lastMessage = "Account not found. Please sign up first!";
             return false;
@@ -79,6 +86,9 @@ public class CustomerService extends UserService{
             lastMessage="Wrong password entered.";
             return false;
         }
+
+        CartWindow cartWindow = new CartWindow(loggedInCustomer);
+
 
         lastMessage="Login successful!";
         return true;
@@ -94,7 +104,7 @@ public class CustomerService extends UserService{
     public CustomerService(OrderService orderService) {
         this.orderService = orderService;
     }
-
+/*
     public void signUp(String username, String password, Date dateOfBirth){
 
         if(!(UserService.isValidUsername(username)))return;
@@ -133,7 +143,7 @@ public class CustomerService extends UserService{
 
         }
 
-    }
+    }*/
     /*
     public boolean logIn(String username,String password){
 
@@ -201,6 +211,10 @@ public class CustomerService extends UserService{
 
     public String showCustomerInfo(Customer customer){
         return customerDAO.showCustomerInfo(customer);
+    }
+
+    public Customer getCustomerByUsername(String username){
+        return customerDAO.getCustomerByUsername(username);
     }
 
 }

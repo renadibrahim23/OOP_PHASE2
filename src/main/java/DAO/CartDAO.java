@@ -53,14 +53,26 @@ public class CartDAO implements GenericDAO<Cart> {
         return -1; // Returning -1 to indicate no cart found for the given user
     }
 
-    public Cart findCartByCustomerId(int customerId) {
-        for (Cart cart : Database.carts) { // Searches in the global carts list
-            if (cart.getUserId() == customerId) {
-                return cart;
+    public Cart findCartByCustomerId(int userId) {
+        if (userId <= 0) {
+            throw new IllegalArgumentException("Invalid user ID.");
+        }
+
+        // Check if a cart already exists for this userId
+        for (Cart cart : Database.carts) {
+            if (cart.getUserId() == userId) {
+                System.out.println("Cart found for userId: " + userId + ", cartId: " + cart.getCartId());
+                return cart; // Return the found cart
             }
         }
-        return null; // No cart found for this ID
+
+        // If no cart is found, create a new one
+        Cart newCart = new Cart(userId);
+        Database.carts.add(newCart); // Add the newly created cart to the list
+        System.out.println("New cart created for userId: " + userId + ", cartId: " + newCart.getCartId());
+        return newCart; // Return the new cart
     }
+
 
 
 }

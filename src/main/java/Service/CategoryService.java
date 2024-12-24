@@ -31,6 +31,14 @@ public class CategoryService {
             Category.setIdCounter(Category.getIdCounter()-1);
         }
     }
+    public Category getCategory(int id){
+        return categoryDAO.getById(id);
+    }
+
+    public Category createCategory(String name){
+        return categoryDAO.createCategory(name,null);
+    }
+
 
     // Update an existing category
     public void updateCategory(Category updatedCategory) {

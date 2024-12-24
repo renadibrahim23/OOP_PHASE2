@@ -40,7 +40,7 @@ public class Customer extends User {
         this.address=address;
         this.gender=gender;
         this.customerId=++idCounter;
-        this.cart = null;
+        this.cart = new Cart(customerId);
     }
 
 

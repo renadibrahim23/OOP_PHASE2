@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Cart {
     private static int idCounter = 0; // static counter for generating IDs
-    private List<Product> addedProducts;
+    private List<Product> addedProducts=new ArrayList<>();
     private double totalPrice;
     private int cartId;
     private Map<Product, Integer> products;

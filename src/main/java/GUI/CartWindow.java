@@ -17,53 +17,48 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class CartWindow extends Application {
 
-    private final CartService cartService;
-    private final ObservableList<Product> cartProductList; // Observable list for cart products
+    private final CartService cartService=new CartService();
+    private final ObservableList<Product> cartProductList= FXCollections.observableArrayList(); // Observable list for cart products
     private TableView<Product> cartTable;
     private int userId; // Default user ID, can be made dynamic
     private Label totalLabel;
     private double total = 0.0;
     private Customer customer;
 
+    public CartWindow(){}
+
     public CartWindow(Customer customer) {// Pass the logged-in customer to the CartWindow
         this.customer = customer;
-        this.cartService = new CartService();
+
         userId = customer.getCustomerId(); // Initialize the cart service
-        this.cartProductList = FXCollections.observableArrayList(); // Observable list for cart items
+         // Observable list for cart items
+    }
+
+    public VBox createContent() {
+        VBox root = new VBox();
+        Label heading = new Label("Your Shopping Cart");
+        Button button = new Button("Checkout");
+
+        root.getChildren().addAll(heading, button);
+        return root;
     }
 
 
     @Override
     public void start(Stage primaryStage) {
-        try {
-            // Initialize the database data and refresh cart data
-            Database.initializeProducts();
-            //refreshCartData();
-
-            // Create main layout
-            BorderPane mainLayout = new BorderPane();
-            mainLayout.setStyle("-fx-background-color: white;");
-
-            // Create sections
-            VBox cartSection = createCartSection();
-            VBox actionSection = createActionSection();
-
-            // Layout setup
-            mainLayout.setCenter(cartSection);
-            mainLayout.setBottom(actionSection);
-
-            Scene scene = new Scene(mainLayout, 800, 600);
-            primaryStage.setTitle("Shopping Cart");
-            primaryStage.setScene(scene);
-            primaryStage.show();
-
-        } catch (Exception e) {
-            showError("Initialization Error", e.getMessage());
+        Database.initializeProducts();
+        Database.initializeCustomers();
+        Scene scene = createCartScene(); // Reuse the new method
+        if (scene != null) {
+            primaryStage.setTitle("Shopping Cart"); // Set window title
+            primaryStage.setScene(scene); // Set the scene to the stage
+            primaryStage.show(); // Show the stage
         }
     }
 
@@ -83,6 +78,36 @@ public class CartWindow extends Application {
     /**
      * Create the cart section UI.
      */
+
+    public Scene createCartScene() {
+        try {
+            // Initialize the database data and refresh cart data
+            Database.initializeProducts();
+            Database.initializeCustomers();
+
+
+            // Create the main layout of the cart window
+            BorderPane mainLayout = new BorderPane();
+            mainLayout.setStyle("-fx-background-color: white;");
+
+            // Create sections
+            VBox cartSection = createCartSection();
+            VBox actionSection = createActionSection();
+
+            // Set layout components
+            mainLayout.setCenter(cartSection);
+            mainLayout.setBottom(actionSection);
+
+            // Return a new scene with the main layout
+            return new Scene(mainLayout, 800, 600);
+        } catch (Exception e) {
+            // Display error in case of issues
+            showError("Initialization Error", e.getMessage());
+            return null;
+        }
+    }
+
+
     private VBox createCartSection() {
         VBox section = new VBox(10);
         section.setPadding(new Insets(20));
@@ -153,8 +178,16 @@ public class CartWindow extends Application {
      * Refresh the cart data in the UI.
      */
     private void refreshCartData() {
-        cartProductList.setAll(cartService.viewProducts(userId));
-        updateTotal();
+        List<Product> products = cartService.viewProducts(userId); // Get products from service
+
+        if (products == null || products.isEmpty()) {
+            System.out.println("Cart is empty or products list is null.");
+            cartProductList.clear(); // Clear the UI list if cart is empty
+        } else {
+            cartProductList.setAll(products); // Update the UI list with available products
+        }
+
+        updateTotal(); // Update the total price
     }
 
     /**

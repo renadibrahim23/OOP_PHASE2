@@ -1,24 +1,20 @@
 package com.example.phase2;
 
+import Entity.Customer;
+import GUI.AdminDashBoard;
+import GUI.CartWindow;
 import Service.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import DAO.*;
-import Entity.*;
-
-
-import java.io.IOException;
-import java.util.Date;
 
 public class LoginController {
-    private final AdminService adminService = new Service.AdminService();
-    private final CustomerService customerService = new Service.CustomerService();
+    private final AdminService adminService = new AdminService();
+    private final CustomerService customerService = new CustomerService();
+
 
     @FXML
     private Button loginasAdmin;
@@ -34,6 +30,7 @@ public class LoginController {
     private Label warningMessage;
 
     // Admin Login
+
     public void loginAsAdmin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
@@ -46,23 +43,21 @@ public class LoginController {
         boolean success = adminService.logIn(username, password);
         warningMessage.setText(adminService.getLastMessage());
         if (success) {
-            // Navigate to the admin dashboard
             try {
-                Stage stage = (Stage) loginasAdmin.getScene().getWindow();
-                Parent root = FXMLLoader.load(getClass().getResource("AdminDashboard.fxml"));
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
+                // Get the current stage
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
+                // Initialize and switch to the Admin Dashboard
+                AdminDashBoard adminDashboard = new AdminDashBoard();
+                adminDashboard.start(stage); // Start Admin Dashboard, switches the stage scene
+            } catch (Exception e) {
+                e.printStackTrace(); // Handle any exceptions during the transition
             }
-
         }
-
     }
 
     // Customer Login
-    public void loginAsCustomer(ActionEvent event) throws IOException {
+    public void loginAsCustomer(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
@@ -71,32 +66,40 @@ public class LoginController {
             return;
         }
 
-
         boolean success = customerService.logIn(username, password);
         warningMessage.setText(customerService.getWarningMessage());
         if (success) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("customer.fxml"));
-            Parent root = loader.load();
+            try {
+                // Retrieve the currently logged-in customer from CustomerService
+                Customer customer = customerService.getCustomerByUsername(username);
+                if (customer == null) {
+                    warningMessage.setText("Error: No customer found.");
+                    return;
+                }
 
-            // Show the new scene
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
+                // Switch to Cart Window
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+                // Pass the customer to CartWindow
+                CartWindow cartWindow = new CartWindow(customer);
+                Scene scene = cartWindow.createCartScene();
+
+                stage.setScene(scene);
+                stage.setTitle("Cart Window");
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    // Navigate to Signup Page
     public void goToSignupPage(ActionEvent event) {
         try {
-            // Adjust the path to your SignupPage.fxml file
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Signup.fxml"));
-            Parent root = loader.load();
-            Stage stage=(Stage)signupButton.getScene().getWindow();
-            Scene signupScene = new Scene(root);
-            stage.setScene(signupScene);
-            stage.setTitle("Signup Page");
-            stage.show();
-        } catch (IOException e) {
+            // Logic to load signup page (if appropriate FXML or layout is set up)
+            warningMessage.setText("Signup Page Navigation is not yet implemented.");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

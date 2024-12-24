@@ -1,6 +1,7 @@
 package GUI;
 
 
+import Database.Database;
 import Entity.*;
 import Exceptions.ProductNotFoundException;
 import javafx.application.Application;
@@ -37,10 +38,25 @@ public class AdminDashBoard extends Application {
     private ObservableList<Admin>adminsList;
     private TableView<Admin>adminsTable;
 
+
+
+    public AdminDashBoard() {}
+
     public Scene adminDashboardScene;
+
+    public VBox createContent() {
+        VBox root = new VBox();
+        Label heading = new Label("Admin Dashboard");
+        Button button = new Button("Admin Action");
+
+        root.getChildren().addAll(heading, button);
+        return root;
+    }
 
     @Override
     public void start(Stage primaryStage) {
+        Database.initializeCustomers();
+        Database.initializeProducts();
         productList = FXCollections.observableArrayList(productService.getProducts());
         // Left Pane: Admin Menu
         VBox leftPane = new VBox(15);

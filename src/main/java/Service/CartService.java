@@ -9,6 +9,7 @@ import Entity.Customer;
 import Entity.Cart;
 import Database.Database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -28,8 +29,10 @@ public class CartService {
 
     //changed
     public void addToCart(int userId, String productName, int quantity) {
+
+        Cart cart = getCartByCustomerId(userId); // Fetch the cart for this user
         // Get the user's cart by using the default cart ID for the user
-        int defaultCartId = cartDAO.getDefaultCartId(userId);
+        int defaultCartId = cart.getCartId();
 
         if (defaultCartId == -1) {
             throw new IllegalStateException("No cart found for user with ID " + userId);
@@ -126,15 +129,16 @@ public class CartService {
     }
 
     public List<Product> viewProducts(int userId) {
-        //get the cart of this user
-        Cart userCart = cartDAO.getById(cartDAO.getDefaultCartId(userId));
-        if (userCart == null) {
-            throw new IllegalStateException("No cart found for user with ID " + userId);
+        // Retrieve the cart for the user
+        Cart cart = getCartByCustomerId(userId); // Ensure this returns a valid cart
+
+        // Ensure the retrieved cart and its products are valid
+        if (cart == null || cart.getAddedProducts() == null) {
+            return new ArrayList<>(); // Return an empty list if there are no products
         }
 
-        return userCart.getAddedProducts();
+        return cart.getAddedProducts(); // Return the list of products in the cart
     }
-
 
     public void placeOrder(int userId) {
         //get the cart for this user
@@ -226,4 +230,8 @@ public class CartService {
         customerDAO.update(customer);
         System.out.println("Customer interests updated successfully for Customer ID: " + customer.getCustomerId());
     }
+
+   public Cart getCartByCustomerId(int customerId){
+        return cartDAO.findCartByCustomerId(customerId);
+   }
 }
