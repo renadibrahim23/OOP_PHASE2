@@ -35,7 +35,7 @@ public class AdminDashBoard extends Application {
     private CategoryService categoryService=new CategoryService();
     private ObservableList<Product>productList;
     private TableView<Product> productTable;
-    private ObservableList<Admin>adminsList;
+    private ObservableList<Admin>adminsList=FXCollections.observableArrayList(adminService.getAllAdmins());
     private TableView<Admin>adminsTable;
 
 
@@ -257,6 +257,8 @@ public class AdminDashBoard extends Application {
         // Layout setup
         HBox buttonBox = new HBox(10, addButton, deleteButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
+       // adminsTable.getColumns().addAll(adminIdCol, adminUserNameCol, roleCol, workingHoursCol);
+        adminsTable.setItems(adminsList);
 
         layout.getChildren().addAll(label, adminsTable, buttonBox);
 
@@ -724,8 +726,9 @@ public class AdminDashBoard extends Application {
         formLayout.setStyle("-fx-padding: 20px;");
 
         // Form Fields
+        /*
         TextField adminIdField = new TextField();
-        adminIdField.setPromptText("Enter Admin ID");
+        adminIdField.setPromptText("Enter Admin ID");*/
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Enter Username");
@@ -767,7 +770,8 @@ public class AdminDashBoard extends Application {
             dateErrorLabel.setText("");
 
             // Retrieve form values
-            String adminId = adminIdField.getText(); // Admin ID isn't validated in this example
+            /*
+            String adminId = adminIdField.getText();*/ // Admin ID isn't validated in this example
             String username = usernameField.getText();
             String password = passwordField.getText();
             String role = roleField.getText();
@@ -775,7 +779,7 @@ public class AdminDashBoard extends Application {
             LocalDate selectedDate = datePicker.getValue();
 
             // Basic empty field validation
-            if (adminId.isEmpty() || username.isEmpty() || password.isEmpty() || role.isEmpty() || workingHoursText.isEmpty() || selectedDate == null) {
+            if ( username.isEmpty() || password.isEmpty() || role.isEmpty() || workingHoursText.isEmpty() || selectedDate == null) {
                 if (username.isEmpty()) usernameErrorLabel.setText("Username is required.");
                 if (password.isEmpty()) passwordErrorLabel.setText("Password is required.");
                 if (role.isEmpty()) roleErrorLabel.setText("Role is required.");
@@ -783,6 +787,15 @@ public class AdminDashBoard extends Application {
                 if (selectedDate == null) dateErrorLabel.setText("Date of Birth is required.");
                 return; // Stop execution until all fields are filled
             }
+
+            boolean usernameExists = adminsList.stream()
+                    .anyMatch(admin -> admin.getUsername().equalsIgnoreCase(username));
+
+            if (usernameExists) {
+                usernameErrorLabel.setText("Username is already taken. Please choose another.");
+                return; // Stop creation if the username is taken
+            }
+
 
             try {
                 // Parse working hours
@@ -792,7 +805,9 @@ public class AdminDashBoard extends Application {
                 Date dateOfBirth = java.sql.Date.valueOf(selectedDate);
 
                 // Call service method
-                adminService.createNewAdmin(username, password, dateOfBirth, role, workingHours);
+                Admin newAdmin=adminService.createNewAdmin(username, password, dateOfBirth, role, workingHours);
+                adminsList.add(newAdmin);
+                adminsTable.refresh();
 
                 // Show success dialog
                 Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
@@ -841,7 +856,7 @@ public class AdminDashBoard extends Application {
 
         // Add all components to the form layout
         formLayout.getChildren().addAll(
-                new Label("Admin ID:"), adminIdField,
+
                 new Label("Username:"), usernameField, usernameErrorLabel,
                 new Label("Role:"), roleField, roleErrorLabel,
                 new Label("Working Hours:"), workingHoursField, workingHoursErrorLabel,

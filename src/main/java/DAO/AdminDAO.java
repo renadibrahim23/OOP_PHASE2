@@ -42,7 +42,7 @@ public class AdminDAO implements GenericDAO<Admin> {
 
 
 
-    public static List<Admin> getAllAdmins(){
+    public  List<Admin> getAllAdmins(){
         return Database.admins;
     }
 
@@ -60,9 +60,10 @@ public class AdminDAO implements GenericDAO<Admin> {
         return admin.getPassword();
     }
 
-    public void createNewAdmin(String username, String password, Date dateOfBirth,String role,double workingHours){
+    public Admin createNewAdmin(String username, String password, Date dateOfBirth,String role,double workingHours){
         Admin admin=new Admin(username,password,dateOfBirth,role,workingHours);
         Database.admins.add(admin);
+        return admin;
 
 
     }

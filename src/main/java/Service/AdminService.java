@@ -200,7 +200,8 @@ public class AdminService extends UserService {
         return adminDAO.getAdminRole(admin);
     }
 
-    public void createNewAdmin(String username, String password, Date dateOfBirth, String role, double workingHours) throws IllegalArgumentException {
+    public Admin createNewAdmin(String username, String password, Date dateOfBirth, String role, double workingHours) throws IllegalArgumentException {
+        if(getAdminByUsername(username)!=null){}
         // Validate Username
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be null or empty.");
@@ -243,7 +244,11 @@ public class AdminService extends UserService {
         }
 
         // If validation passes, create the Admin
-        adminDAO.createNewAdmin(username, password, dateOfBirth, role, workingHours);
+        return adminDAO.createNewAdmin(username, password, dateOfBirth, role, workingHours);
+    }
+
+    public List<Admin> getAllAdmins(){
+        return adminDAO.getAllAdmins();
     }
 
     public int getNumberOfCustomers(){
