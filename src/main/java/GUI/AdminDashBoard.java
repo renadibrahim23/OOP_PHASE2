@@ -65,19 +65,19 @@ public class AdminDashBoard extends Application {
         Label adminMenuLabel = new Label("Admin Dashboard");
         adminMenuLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;");
         Button customersBtn = new Button("Manage Customers");
-        Button viewReportsBtn = new Button("View Reports");
+       // Button viewReportsBtn = new Button("View Reports");
         Button productsBtn = new Button("Manage Products");
         Button adminsBtn = new Button("Manage Admins");
 
         //Button settingsBtn = new Button("Settings");
 
         customersBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
-        viewReportsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
+        //viewReportsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         productsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
         adminsBtn.setStyle("-fx-background-color: #ff4081; -fx-text-fill: white; -fx-padding: 10px;");
 
 
-        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, viewReportsBtn, productsBtn,adminsBtn);
+        leftPane.getChildren().addAll(adminMenuLabel, customersBtn, productsBtn,adminsBtn);
 
         // Right Pane
         StackPane rightPane = new StackPane();
@@ -101,10 +101,11 @@ public class AdminDashBoard extends Application {
             primaryStage.setScene(manageUsersScene);
         });
 
+        /*
         viewReportsBtn.setOnAction(e -> {
             Scene reportsScene = createReportsScene(primaryStage, adminDashboardScene);
             primaryStage.setScene(reportsScene);
-        });
+        });*/
 
         productsBtn.setOnAction(e -> {
             Scene productsScene = createProductsScene(primaryStage, adminDashboardScene);
@@ -271,6 +272,7 @@ public class AdminDashBoard extends Application {
 
 
     // Create "View Reports" Scene
+    /*
     private Scene createReportsScene(Stage stage, Scene previousScene) {
         VBox layout = new VBox(15);
         layout.setStyle("-fx-padding: 20px; -fx-background-color: #f4f4f4;");
@@ -282,7 +284,7 @@ public class AdminDashBoard extends Application {
         layout.getChildren().addAll(label, backButton);
 
         return new Scene(layout, 900, 600);
-    }
+    }*/
 
     // Create "Settings" Scene
     /*
